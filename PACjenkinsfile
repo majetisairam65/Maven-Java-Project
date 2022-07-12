@@ -3,7 +3,7 @@ pipeline {
         label 'buildserver'
         }
       tools  {
-       maven "maven3"
+       maven "maven03"
         }
 
 
