@@ -24,22 +24,29 @@ pipeline {
             success{
             junit '**/target/surefire-reports/*.xml'
             }
-
             }
         }
 		stage('Packaging-Application') {
             steps {
                 echo 'Packaging-Application'
+                sh "mvn clean package"
+            }
+            post{
+            success{
+            archiveArtifacts artifacts: '**/*.war', followSymlinks: false
+            }
             }
         }
 		stage('Deploy-to-Server') {
             steps {
                 echo 'Deploy-to-Server'
+                deploy adapters: [tomcat9(credentialsId: 'staging-server', path: '', url: 'http://3.110.224.70:9090/')], contextPath: 'webapp', war: 'target/*.war'
             }
         }
 		stage('Post-Deployment-Testing') {
             steps {
                 echo 'Post-Deployment-Testing'
+                sh "mvn clean verify"
             }
         }
     }
